@@ -1,0 +1,36 @@
+{
+  "name": "prog_be",
+  "version": "1.0.0",
+  "description": "a project video film and streaming build in nodejs and reactjs Vue",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AzirEmperorShurima/video_Stream_ProG.git"
+  },
+  "keywords": [
+    "video",
+    "stream",
+    "nodejs",
+    "vue",
+    "reactjs",
+    "codelord",
+    "videoStramProG"
+  ],
+  "author": "Trần Văn Trí Code Lỏ",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AzirEmperorShurima/video_Stream_ProG/issues"
+  },
+  "homepage": "https://github.com/AzirEmperorShurima/video_Stream_ProG#readme",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
