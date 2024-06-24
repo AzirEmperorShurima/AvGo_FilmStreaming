@@ -1,0 +1,14 @@
+
+.VideoPlayer{
+    min-height: 100vh;
+    padding: 20px;
+    border: 2px yellow solid;
+    width: 80%;
+    min-width: 1000px;
+    position: absolute;
+    left: 14%;
+}
+.ytbVideo{
+    border: 2px red solid;
+    border-radius: 50px;
+}
