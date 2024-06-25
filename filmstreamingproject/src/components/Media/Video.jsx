@@ -1,4 +1,3 @@
-// src/components/Media/VideoPlayer.js
 import React, { useState, useEffect, useRef } from 'react';
 
 const VideoPlayer = ({ src, width = '950', height = '530', id }) => {
@@ -6,9 +5,9 @@ const VideoPlayer = ({ src, width = '950', height = '530', id }) => {
     const isPhimmoi = src.includes('phimmoiday.net');
     const isBlobUrl = src.startsWith('blob:');
     const [blobUrl, setBlobUrl] = useState('');
-    const [videoRef, setVideoRef] = useState(null);
     const playerRef = useRef(null);
     const [player, setPlayer] = useState(null);
+    const [videoId, setVideoId] = useState('');
 
     const onPlayerReady = (event) => {
         setPlayer(event.target);
@@ -16,47 +15,27 @@ const VideoPlayer = ({ src, width = '950', height = '530', id }) => {
     };
 
     useEffect(() => {
-        const onYouTubeIframeAPIReady = () => {
-            playerRef.current = new window.YT.Player('youtube-player', {
-                height: height,
-                width: width,
-                videoId: id,
-                events: {
+        if (isYouTube) {
+            const url = new URL(src);
+            setVideoId(url.searchParams.get('v'));
 
-                    'onReady': onPlayerReady
-                }
-            });
-        };
+            const tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-        if (window.YT) {
-            onYouTubeIframeAPIReady();
-        } else {
-            window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+            window.onYouTubeIframeAPIReady = () => {
+                setPlayer(new window.YT.Player(playerRef.current, {
+                    height: '390',
+                    width: '640',
+                    videoId: url.searchParams.get('v'),
+                    events: {
+                        'onReady': onPlayerReady,
+                    },
+                }));
+            };
         }
-    }, [id]);
-
-    async function fetchDataFromBlobUrl(blobUrl) {
-        try {
-            const response = await fetch(blobUrl, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'text/javascript',
-
-                },
-            });
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            const blob = await response.blob();
-            const objectUrl = URL.createObjectURL(blob);
-            setBlobUrl(objectUrl);
-
-            // Clean up object URL when component unmounts or when blobUrl changes
-            return () => URL.revokeObjectURL(objectUrl);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    }
+    }, [src, isYouTube]);
 
     const getYouTubeEmbedUrl = (url) => {
         const videoId = new URL(url).searchParams.get('v');
@@ -66,7 +45,9 @@ const VideoPlayer = ({ src, width = '950', height = '530', id }) => {
     const getPhimmoiEmbedUrl = (url) => {
         return url;
     };
+
     const handleFastForward = () => {
+        console.log('player' + player)
         if (player) {
             const currentTime = player.getCurrentTime();
             player.seekTo(currentTime + 10);
@@ -74,29 +55,33 @@ const VideoPlayer = ({ src, width = '950', height = '530', id }) => {
     };
 
     const handleRewind = () => {
+        console.log('player' + playerRef)
         if (player) {
             const currentTime = player.getCurrentTime();
-            player.seekTo(currentTime - 10);
+            player.seekTo(Math.max(currentTime - 10, 0));
         }
     };
+
     return (
         <div className='VideoPlayer'>
             {isYouTube && (
                 <iframe
-                    ref={(ref) => setVideoRef(ref)}
+
+                    ref={playerRef}
                     width={width}
                     height={height}
                     src={getYouTubeEmbedUrl(src)}
                     frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture ;"
                     allowFullScreen
                     title="Embedded YouTube"
                     className='ytbVideo'
+
                 ></iframe>
             )}
             {isPhimmoi && (
                 <iframe
-                    ref={(ref) => setVideoRef(ref)}
+                    ref={playerRef}
                     width={width}
                     height={height}
                     src={getPhimmoiEmbedUrl(src)}
@@ -113,11 +98,18 @@ const VideoPlayer = ({ src, width = '950', height = '530', id }) => {
                 </video>
             )}
             {!isYouTube && !isPhimmoi && !isBlobUrl && (
-                <video width={width} height={height} controls>
-                    <source src={src} type="video/mp4" />
-                    Your browser does not support the video tag.
-                </video>
+                <iframe
+                    ref={playerRef}
+                    width={width}
+                    height={height}
+                    src={src}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    title="Embedded Video"
+                ></iframe>
             )}
+            <p className="detail-video-title" style={{ textAlign: "start" }}>Cọaodshdakjkd</p>
             <div>
                 <button onClick={handleRewind}>Tua lại 10s</button>
                 <button onClick={handleFastForward}>Tua tới 10s</button>

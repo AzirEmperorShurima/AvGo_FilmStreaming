@@ -68,10 +68,9 @@ function HEADER({ Authorization, user, Authentication }) {
                     )
                 ) : (
                     <div className="auth-links">
-                        <Link to="/login" className="auth-link">Login</Link>
+                        <Link to="/login" className="auth-link-item">Login</Link>
                         {/* <Link to="/register" className="auth-link">Register</Link> */}
-
-                        <a href='#'>Register</a>
+                        <Link to={"/Auth/Register"} className='auth-link-item' >Register</Link>
 
 
                     </div>

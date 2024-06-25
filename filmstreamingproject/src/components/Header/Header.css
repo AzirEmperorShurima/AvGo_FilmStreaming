@@ -132,9 +132,15 @@
 .feature.open{
     display: block;
 }
-/* .auth-links{
-    margin-left: 30px;
+.auth-links{
+    width: 150px;
+    /* margin-left: 30px; */
     display: flex;
     justify-content: space-between;
     align-items: center;
-} */
+}
+.auth-links .auth-link-item{
+    padding: 0 5px;
+    border: 2px pink solid;
+    border-radius: 10px;
+}

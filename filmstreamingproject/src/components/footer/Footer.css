@@ -1,11 +1,14 @@
 
-.new_footer_area {
+.new_footer_area.light-mode {
     background: #fbfbfd;
+}
+.new_footer_area.dark-mode {
+    background: black;
 }
 
 
 .new_footer_top {
-    padding: 120px 0px 270px;
+    padding: 100px 100px 300px;
     position: relative;
       overflow-x: hidden;
 }
@@ -28,8 +31,14 @@
     margin-bottom: 20px;
 }
 .new_footer_top .company_widget .f_subscribe_two .btn_get {
-    border-width: 1px;
+    transition: .3s all;
+    border: 2px pink solid;
     margin-top: 20px;
+    border-radius: 5px;
+    margin-left: 5px;
+    font-weight: bold;
+    height: 25px;
+    width: 100px;
 }
 .btn_get_two:hover {
     background: transparent;
@@ -69,8 +78,9 @@ a:hover, a:focus, .btn:hover, .btn:focus, button:hover, button:focus {
     height: 44px;
     line-height: 43px;
     background: transparent;
-    border: 1px solid #e2e2eb;
-    font-size: 24px;
+    /* border: 1px solid #e2e2eb;
+    font-size: 24px; */
+    font-size: 44px;
 }
 .f_social_icon a {
     width: 46px;

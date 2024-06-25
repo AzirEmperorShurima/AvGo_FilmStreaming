@@ -14,11 +14,14 @@ const VideoList = ({ videos }) => {
                 {videos.map((video) => (
                     <li key={video.id} className='li-video-box'>
                         <Link to={`/listVideo/${video.id}`}>
-                            <img src='https://tuoi69.lol/wp-content/uploads/2021/12/trieu-le-dinh-sexy-2.jpg'
-                                className='video-thumbnail'></img>
-                            <p className="video-title">{ video.title}</p>
+                            <div className="image-box">
+                                <img src='https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Yasuo_57.jpg'
+                                    className='video-thumbnail' alt='k'></img>
+
+                            </div>
+                            <p className="video-title">{video.title}</p>
                         </Link>
-                       
+
                     </li>
                 ))}
             </ul>

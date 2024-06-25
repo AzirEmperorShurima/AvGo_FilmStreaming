@@ -29,7 +29,7 @@ function LOGIN(props) {
         console.table(c)
     }
     return (
-        <div className="container">
+        <div className="login-form-container">
             <div className="heading">Sign In</div>
             <form action="" className="form">
                 <input required className="input" value={email} onChange={handleChangEmail} type="email" name="email" id="email" placeholder="E-mail" autoComplete='username' />

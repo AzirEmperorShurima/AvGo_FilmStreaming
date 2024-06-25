@@ -24,6 +24,8 @@ import { BiAtom } from "react-icons/bi";
 import './App.css';
 import Page404 from './components/Error/Public/404Page';
 import Footer from './components/footer/footers';
+import CreateVideoContent from './components/Media/CreateVideoContent';
+import Register from './components/Auth/Register/Register';
 function App() {
   const [mode, setMode] = useState(() => {
     return localStorage.getItem('mode') === 'dark';
@@ -58,18 +60,18 @@ function App() {
   }, []);
   const videos = [
     { id: '1', title: 'Video 1', src: 'https://www.youtube.com/watch?v=KObR1fhS7nQ' },
-    { id: '2', title: 'Video 2', src: 'https://phimmoiday.net/watch-muc-dich-cua-cac-co-nang/full-sv1.html' },
-    { id: '3', title: 'Video 3', src: 'https://www.youtube.com/watch?v=KObR1fhS7nQ' },
-    { id: '3', title: 'Video 3', src: 'https://www.youtube.com/watch?v=KObR1fhS7nQ' },
-    { id: '3', title: 'Video 3', src: 'https://www.youtube.com/watch?v=KObR1fhS7nQ' },
-    { id: '3', title: 'Video 3', src: 'https://www.youtube.com/watch?v=KObR1fhS7nQ' },
-    { id: '3', title: 'Video 3', src: 'https://www.youtube.com/watch?v=KObR1fhS7nQ' },
-    { id: '3', title: 'Video 3', src: 'https://www.youtube.com/watch?v=KObR1fhS7nQ' },
-    { id: '3', title: 'Video 3', src: 'https://www.youtube.com/watch?v=KObR1fhS7nQ' },
-    { id: '3', title: 'Video 3', src: 'https://www.youtube.com/watch?v=KObR1fhS7nQ' },
-    { id: '3', title: 'Video 3', src: 'https://www.youtube.com/watch?v=KObR1fhS7nQ' },
-    { id: '3', title: 'Video 3', src: 'https://www.youtube.com/watch?v=KObR1fhS7nQ' },
-    
+    { id: '2', title: 'Video 2', src: 'https://www.youtube.com/watch?v=KObR1fhS7nQ' },
+    { id: '4', title: 'Video 3', src: 'https://www.youtube.com/watch?v=KObR1fhS7nQ' },
+    { id: '5', title: 'Video 3', src: 'https://www.youtube.com/watch?v=KObR1fhS7nQ' },
+    { id: '6', title: 'Video 3', src: 'https://www.youtube.com/watch?v=KObR1fhS7nQ' },
+    { id: '7', title: 'Video 3', src: 'https://www.youtube.com/watch?v=KObR1fhS7nQ' },
+    { id: '8', title: 'Video 3', src: 'https://www.youtube.com/watch?v=KObR1fhS7nQ' },
+    { id: '9', title: 'Video 3', src: 'https://www.youtube.com/watch?v=KObR1fhS7nQ' },
+    { id: '10', title: 'Video 3', src: 'https://www.youtube.com/watch?v=KObR1fhS7nQ' },
+    { id: '11', title: 'Video 3', src: 'https://www.youtube.com/watch?v=KObR1fhS7nQ' },
+    { id: '12', title: 'Video 3', src: 'https://www.youtube.com/watch?v=KObR1fhS7nQ' },
+    { id: '13', title: 'Video 3', src: 'https://www.youtube.com/watch?v=KObR1fhS7nQ' },
+
   ];
 
   return (
@@ -95,19 +97,22 @@ function App() {
                     </>
                   ) : (
                     <Routes>
-                      {/* <Route path="/products" element={<ProductList />} /> */}
                       <Route exact path='/'></Route>
+                      <Route path="/products/action/createvideocontent" element={<ProtectedRoute element={CreateVideoContent} />} />
+                      <Route path='/Auth/register' element={<Register />}></Route>
+
                       <Route path="/listVideo/:id" element={<VideoDetail videos={videos} />} />
-                      <Route path="/login" element={<LOGIN />} />
+                      <Route path="/Auth/login" element={<LOGIN />} />
                       <Route path="/listVideo" element={<VideoList videos={videos} />}></Route>
                       <Route path='*' element={<NotFound />}></Route>
+
                       {/* <Route path='*' element={<Page404/>}></Route> */}
 
                     </Routes>)
                   }
 
                 </div>
-                <Footer></Footer> 
+                <Footer darkLight={mode}></Footer>
                 {/* <FOOTER /> */}
 
               </>
