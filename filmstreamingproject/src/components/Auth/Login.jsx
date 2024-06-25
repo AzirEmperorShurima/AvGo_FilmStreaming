@@ -35,7 +35,7 @@ function LOGIN(props) {
                 <input required className="input" value={email} onChange={handleChangEmail} type="email" name="email" id="email" placeholder="E-mail" autoComplete='username' />
                 <input required className="input password-container" value={password} onChange={handleChangePassword} type={showPass ? 'text' : 'password'} name="password" id="password" placeholder="Password" autoComplete="current-password" />
                 {showPass ? (
-                    <AiFillEyeInvisible onClick={handleShowPass} className='showpass-icon icon' />
+                    <AiFillEyeInvisible onClick={handleShowPass} className='showpass-icon icon' style={{color:'black'}}/>
                 ) : (
                     <AiFillEye onClick={handleShowPass} className='showpass-icon icon' />
                 )}

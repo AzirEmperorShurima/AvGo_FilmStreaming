@@ -1,9 +1,20 @@
 // src/NotFound.js
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './err.css';
 
-function NotFound() {
+function NotFound({ Auth }) {
+    const navigate = useNavigate()
+    useEffect(() => {
+        const timming = setTimeout(() => {
+            if (!Auth)
+                navigate('/Auth/login')
+            navigate('/')
+        }, 5000)
+        return () => clearTimeout(timming)
+    }, [Auth, navigate])
+
+
     return (
         <div className="agileits-main">
             <div className="agileinfo-row">

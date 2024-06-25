@@ -1,18 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AuthProvider, AuthContext } from './Context/AuthContext';
-// import Home from './components/Home';
-// import ProductList from './components/ProductList';
-// import ProductDetail from './components/ProductDetail';
-// import Cart from './components/Cart';
-// import Checkout from './components/Checkout';
 import LOGIN from './components/Auth/Login';
 import HEADER from './components/Header/Header';
 import ProtectedRoute from './router/Private/PrivateRouter'
-import FOOTER from './components/footer/footer';
-
-import DARKLIGHTSWITCH from './components/toogleSwitch/Dark_Light_Switch';
-
 import './reset1.css';
 import LOADER from './components/loader/loader';
 import HamsterLoader from './components/loader/HamsterLoader';
@@ -20,9 +11,7 @@ import VideoList from './components/Media/VideoList';
 import VideoDetail from './components/Media/VideoDetail';
 import SIDEBAR from './components/SideBar/SideBar';
 import NotFound from './components/Error/Public/err';
-import { BiAtom } from "react-icons/bi";
 import './App.css';
-import Page404 from './components/Error/Public/404Page';
 import Footer from './components/footer/footers';
 import CreateVideoContent from './components/Media/CreateVideoContent';
 import Register from './components/Auth/Register/Register';
@@ -81,6 +70,7 @@ function App() {
           <AuthContext.Consumer>
             {({ auth, logout }) => (
               <>
+
                 <HEADER user={auth?.user} onLogout={logout} Authorization={auth?.Authorization} Authentication={true} />
                 <SIDEBAR mode={mode} handleToggle={handleDarkLightToogleSwitch}></SIDEBAR>
                 {/* <BiAtom className='App-logo'/> */}
@@ -100,20 +90,15 @@ function App() {
                       <Route exact path='/'></Route>
                       <Route path="/products/action/createvideocontent" element={<ProtectedRoute element={CreateVideoContent} />} />
                       <Route path='/Auth/register' element={<Register />}></Route>
-
                       <Route path="/listVideo/:id" element={<VideoDetail videos={videos} />} />
                       <Route path="/Auth/login" element={<LOGIN />} />
                       <Route path="/listVideo" element={<VideoList videos={videos} />}></Route>
-                      <Route path='*' element={<NotFound />}></Route>
-
-                      {/* <Route path='*' element={<Page404/>}></Route> */}
-
+                      <Route path='*' element={<NotFound Auth={false} />}></Route>
                     </Routes>)
                   }
 
                 </div>
                 <Footer darkLight={mode}></Footer>
-                {/* <FOOTER /> */}
 
               </>
             )}
@@ -121,8 +106,10 @@ function App() {
           </AuthContext.Consumer>
         </div>
 
-      </AuthProvider></Router>
+      </AuthProvider>
+    </Router>
   );
+
 }
 
 export default App;

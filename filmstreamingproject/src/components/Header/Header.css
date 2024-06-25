@@ -4,7 +4,7 @@
     align-items: center;
     background-color: white;
     position: sticky;
-    min-height: 100px;
+    min-height: 50px;
     top: 0;
     left: 0;
     width: calc(100% - 20px);
@@ -12,6 +12,7 @@
     padding: 0 0 10px 10px;
     margin:  0 20px;
     border-bottom: 1px gray solid;
+    height: 70px;
     
 }
 
@@ -140,7 +141,11 @@
     align-items: center;
 }
 .auth-links .auth-link-item{
-    padding: 0 5px;
+    padding: 0 7px;
     border: 2px pink solid;
     border-radius: 10px;
+    transition: all .3s;
+}
+.auth-links .auth-link-item:hover{
+    font-weight: bolder;
 }

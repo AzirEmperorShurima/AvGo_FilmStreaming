@@ -29,10 +29,10 @@ function HEADER({ Authorization, user, Authentication }) {
     return (
         <header className='app-header'>
             <ul className="menu" id='menu-bar'>
-                <li className="menu-tab"><a href="#" className="menu-link">Home</a></li>
+                <li className="menu-tab"><a href="#" className="menu-link"> <Link to={'/'}>Home</Link></a></li>
                 <li className="menu-tab"><a href="#" className="menu-link">TV Shows</a></li>
                 <li className="menu-tab"><a href="#" className="menu-link">Movies</a></li>
-                <li className="menu-tab"><a href="#" className="menu-link">Game Shows</a></li>
+                <li className="menu-tab"><a href="#" className="menu-link"><Link to={'/listVideo'}>List Video</Link> </a></li>
                 <li className="menu-tab"><a href="#" className="menu-link">More Type</a></li>
                 {Authentication && Authorization ? (
                     getRole() === 'admin' ? (
@@ -68,7 +68,7 @@ function HEADER({ Authorization, user, Authentication }) {
                     )
                 ) : (
                     <div className="auth-links">
-                        <Link to="/login" className="auth-link-item">Login</Link>
+                        <Link to="/Auth/login" className="auth-link-item">Login</Link>
                         {/* <Link to="/register" className="auth-link">Register</Link> */}
                         <Link to={"/Auth/Register"} className='auth-link-item' >Register</Link>
 
