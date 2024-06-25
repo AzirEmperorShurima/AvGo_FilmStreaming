@@ -102,10 +102,19 @@ export const AuthProvider = ({ children }) => {
         navigate('/');
     };
 
-    const logout = () => {
-        Cookies.remove('token');
-        setAuth(null);
-        navigate('/login');
+    const logout = async () => {
+        try {
+            const token = auth?.token;
+            if (token) {
+                await revokeTokenOnServer(token);
+            }
+        } catch (error) {
+            console.error('Failed to revoke token:', error);
+        } finally {
+            Cookies.remove('token');
+            setAuth(null);
+            navigate('/login');
+        }
     };
 
     const handleLogin = async (username, password) => {
@@ -150,4 +159,20 @@ const fetchTokenFromServer = async (username, password) => {
 
     const data = await response.json();
     return data.token; // Giả sử token nằm trong thuộc tính `token` của JSON response
+};
+
+const revokeTokenOnServer = async (token) => {
+    const response = await fetch('https://example.com/api/logout', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+
+    // Server should respond with a success status code if token is revoked
 };
