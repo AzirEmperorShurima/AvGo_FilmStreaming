@@ -64,8 +64,8 @@ function SIDEBAR({ handleToggle, mode }) {
                     <BiChevronRight className='bx bx-chevron-right toggle' onClick={handleToggleClick} />
                 </header>
 
-                <div className="menu-bar" 
-                    // onMouseLeave={handleMouseOutSideBar}
+                <div className="menu-bar"
+                // onMouseLeave={handleMouseOutSideBar}
                 >
                     <div className="menu" onMouseEnter={handleHoverSideBar}>
                         <li className="search-box" onClick={handleSearchClick}>
@@ -74,7 +74,7 @@ function SIDEBAR({ handleToggle, mode }) {
                         </li>
                         <ul className="menu-links">
                             <li className="nav-link">
-                                <a href="mailto:52@gmail.com">
+                                <a href="mailto:tranvantri352@gmail.com">
                                     <BiHomeAlt className='bx bx-home-alt icon' />
                                     <span className="text nav-text">Dashboard</span>
                                 </a>

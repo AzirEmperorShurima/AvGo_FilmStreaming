@@ -1,9 +1,11 @@
 // src/NotFound.js
 import React, { useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './err.css';
 
 function NotFound({ Auth }) {
+    const location = useLocation()
+    console.log(location)
     const navigate = useNavigate()
     useEffect(() => {
         const timming = setTimeout(() => {

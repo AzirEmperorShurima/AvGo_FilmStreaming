@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import React, { useState, useEffect, } from 'react';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import { AuthProvider, AuthContext } from './Context/AuthContext';
 import LOGIN from './components/Auth/Login';
 import HEADER from './components/Header/Header';
@@ -15,7 +15,9 @@ import './App.css';
 import Footer from './components/footer/footers';
 import CreateVideoContent from './components/Media/CreateVideoContent';
 import Register from './components/Auth/Register/Register';
+import EmptyPage from './components/EmptyPage';
 function App() {
+  const [isNotFound, setIsNotFound] = useState(false);
   const [mode, setMode] = useState(() => {
     return localStorage.getItem('mode') === 'dark';
   });
@@ -27,16 +29,17 @@ function App() {
     localStorage.setItem('mode', newMode ? 'dark' : 'light');
   };
 
-  useEffect(() => {
-    const a = document.getElementById('wrapper');
-    if (mode) {
-      a.classList.add('dark-mode');
-      a.classList.remove('light-mode');
-    } else {
-      a.classList.add('light-mode');
-      a.classList.remove('dark-mode');
-    }
-  }, [mode]);
+  // useEffect(() => {
+  //   const a = document.getElementById('wrapper');
+    
+  //   if (mode) {
+  //     a.classList.add('dark-mode');
+  //     a.classList.remove('light-mode');
+  //   } else {
+  //     a.classList.add('light-mode');
+  //     a.classList.remove('dark-mode');
+  //   }
+  // }, [mode]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -62,19 +65,25 @@ function App() {
     { id: '13', title: 'Video 3', src: 'https://www.youtube.com/watch?v=KObR1fhS7nQ' },
 
   ];
+  // const location = useLocation();
+  // useEffect(() => {
+  //   if (location.pathname === '*' || location.pathname === '/404') {
+  //     setIsNotFound(true);
+  //   } else {
+  //     setIsNotFound(false);
+  //   }
+  // }, [location]);
 
   return (
     <Router>
       <AuthProvider>
-        <div className="App App-Container" id='wrapper'>
+        <div className={`App App-Container ${mode?'dark-mode':"light-mode"}`} id='wrapper'>
           <AuthContext.Consumer>
             {({ auth, logout }) => (
               <>
 
                 <HEADER user={auth?.user} onLogout={logout} Authorization={auth?.Authorization} Authentication={true} />
                 <SIDEBAR mode={mode} handleToggle={handleDarkLightToogleSwitch}></SIDEBAR>
-                {/* <BiAtom className='App-logo'/> */}
-                {/* <DARKLIGHTSWITCH mode={mode} onToogleDarkLight={handleDarkLightToogleSwitch} /> */}
                 <div className='main-body' id='main'>
                   {loading ? (
                     <>
@@ -87,7 +96,7 @@ function App() {
                     </>
                   ) : (
                     <Routes>
-                      <Route exact path='/'></Route>
+                      <Route exact path='/' element={<EmptyPage />}></Route>
                       <Route path="/products/action/createvideocontent" element={<ProtectedRoute element={CreateVideoContent} />} />
                       <Route path='/Auth/register' element={<Register />}></Route>
                       <Route path="/listVideo/:id" element={<VideoDetail videos={videos} />} />

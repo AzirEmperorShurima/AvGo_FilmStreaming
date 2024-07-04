@@ -161,6 +161,7 @@ const fetchTokenFromServer = async (username, password) => {
     return data.token; // Giả sử token nằm trong thuộc tính `token` của JSON response
 };
 
+//revoked token
 const revokeTokenOnServer = async (token) => {
     const response = await fetch('https://example.com/api/logout', {
         method: 'POST',
@@ -174,5 +175,5 @@ const revokeTokenOnServer = async (token) => {
         throw new Error('Network response was not ok');
     }
 
-    // Server should respond with a success status code if token is revoked
+
 };
