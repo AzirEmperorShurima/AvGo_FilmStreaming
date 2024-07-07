@@ -125,7 +125,7 @@ const checkRole = (roles) => async (req, res, next) => {
     }
 };
 
-export const isADMIN = Role_Checking(['admin'])
+export const isADMIN = checkRole(['admin'])
 export const isCREATOR = checkRole(['creator']);
 export const isCENSOR = checkRole(['censor']);
 export const isVIPUSER = checkRole(['vip']);
