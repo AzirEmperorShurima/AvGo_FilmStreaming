@@ -25,6 +25,10 @@ const movieSchema = new mongoose.Schema(
         duration: {
             type: Number, // Duration in minutes
         },
+        like: {
+            type: Number,
+            min: 0
+        },
         rating: {
             type: Number,
             min: 0,

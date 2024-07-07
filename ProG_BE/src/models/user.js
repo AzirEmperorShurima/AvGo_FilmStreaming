@@ -3,6 +3,11 @@ import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema(
     {
+        id: {
+            type: String,
+            unique: true,
+            required: true
+        },
         username: {
             type: String,
             unique: true,
@@ -24,6 +29,10 @@ const userSchema = new mongoose.Schema(
                 ref: "Role",
             },
         ],
+        isActive: {
+            type: Boolean,
+            default: true
+        }
     },
     {
         timestamps: true,

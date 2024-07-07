@@ -1,6 +1,7 @@
 import express from 'express';
+
 const app = express();
-const router = express.router();
+const router = express.Router();
 app.set("env", "development");
 app.set("port", process.env.PORT || 4000)
 app.set('trust proxy', true)
