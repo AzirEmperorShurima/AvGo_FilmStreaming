@@ -3,10 +3,27 @@ import { StatusCodes } from 'http-status-codes';
 import { SECRET_KEY } from '../../config';
 import user from '../models/user';
 import { getCookies } from '../Middlewares/Cookies';
+import Role from '../models/Role';
 
 export const Signup_Handler = async (req, res) => {
-    const { username, password, email } = req.body;
+    try {
+        const { username, password, email } = req.body;
+        const CreateUser = new user({ username, password, email });
+
+        const role = await Role.findOne({ name: 'user' });
+        CreateUser.roles = [role._id];
+        const saveUser = await CreateUser.save();
+        const token = await getCookies(CreateUser, res)
+        CreateUser.tokens = [{ token, signedAt: Date.now().toString() }];
+        await CreateUser.save();
+        return res.status(StatusCodes.CREATED).json({ message: 'User created successfully', user })
+    } catch (error) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error in Create User Task', error });
+    }
+
 }
+
+
 
 export const loginHandler = async (req, res) => {
     const UserName = req.body.username;

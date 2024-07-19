@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { loginHandler, logoutHandler } from "../Controller/Auth_Controller";
+import { loginHandler, logoutHandler, Signup_Handler } from "../Controller/Auth_Controller";
 import { Exist_User_Checking, Valid_Roles_Certification } from "../Middlewares/Signup_Verified";
 
 const router = Router();
@@ -14,6 +14,6 @@ router.use((req, res, next) => {
 })
 router.post("/signin", loginHandler)
 router.post("/logout", logoutHandler)
-router.post("/signup", [Exist_User_Checking, Valid_Roles_Certification], loginHandler)
+router.post("/signup", [Exist_User_Checking, Valid_Roles_Certification], Signup_Handler)
 
 export default router;

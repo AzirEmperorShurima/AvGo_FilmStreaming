@@ -11,6 +11,7 @@ export const getCookies = async (User, res) => {
         const token = jwt.sign({ id: id }, SECRET_KEY, { expiresIn: '24h' })
         await res.cookie('token', token, { maxAge: 60 * 60 * 24, httpOnly: true, secure: true })
         res.status(StatusCodes.OK).json({ message: "Cookies Created Successfully", token: token });
+        return token
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Create Cookies Error", error: err });
     }
