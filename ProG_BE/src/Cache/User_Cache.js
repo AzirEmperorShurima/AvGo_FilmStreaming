@@ -1,12 +1,15 @@
-import { BloomFilter } from "bloom-filters";
+import pkg from 'bloom-filters';
+const { BloomFilter } = pkg;
 import redis from "redis";
-import { getData_From_MongoDB } from "../Data/fetchData_MongoDB";
-import { MAINDB_MONGODB_DBNAME } from "../../config";
+import { getData_From_MongoDB } from "../Data/fetchData_MongoDB.js";
+import { MAINDB_MONGODB_DBNAME, MAINDB_MONGODB_URL } from "../../config.js";
 
 export const redisClient = redis.createClient();
-export const bloomConfig = new BloomFilter(1000, 0.01);
+await redisClient.connect();
 
-const url = MAINDB_MONGODB_DBNAME;
+export const bloomConfig = new BloomFilter(1000, 10);
+
+const url = MAINDB_MONGODB_URL;
 const dbName = MAINDB_MONGODB_DBNAME;
 const collectionName = 'user';
 
@@ -38,4 +41,4 @@ export const fetchDataToCache = async () => {
         throw error;
     }
 };
-
+await fetchDataToCache()

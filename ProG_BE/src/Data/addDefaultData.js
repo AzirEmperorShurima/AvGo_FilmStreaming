@@ -1,6 +1,6 @@
-import { ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_USERNAME } from "../../config";
-import Role, { defaultRole } from "../models/Role"
-import user from "../models/user";
+import { ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_USERNAME } from "../../config.js";
+import Role, { defaultRole } from "../models/Role.js"
+import user from "../models/user.js";
 
 
 export const create_Roles_Collection_Data = async () => {
