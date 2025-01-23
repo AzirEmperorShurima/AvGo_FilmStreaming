@@ -23,7 +23,7 @@ export const Signup_Handler = async (req, res) => {
         CreateUser.roles = [role._id];
         const token = await getCookies(CreateUser, res)
 
-        CreateUser.tokens = [{ token, signedAt: Date.now().toString() }];
+        CreateUser.tokens = [{ type: "LOGIN-TOKEN", token, signedAt: Date.now().toString(), expiredAt: Date.now().toString() }];
         const saveUser = await CreateUser.save();
         console.log('User Created Successfully', saveUser);
         const redisKey = `otp:${saveUser._id}`
@@ -95,7 +95,7 @@ export const loginHandler = async (req, res) => {
         // Xử lý cookies và tokens
         const newCookies = await getCookies(foundUser, res);
         console.log(newCookies.cookie)
-        const token = await manageTokens(foundUser, newCookies);
+        const token = await manageTokens(foundUser, newCookies, "LOGIN-TOKEN");
 
         return res.status(StatusCodes.OK).json({ message: 'Login Successful', token });
     } catch (err) {
@@ -188,7 +188,7 @@ export const refreshToken = async (req, res) => {
 //         tokens: [...tokensArray, { token, signedAt: Date.now().toString() }],
 //     });
 // }
-export const manageTokens = async (_user, token) => {
+export const manageTokens = async (_user, token, type) => {
     try {
         let tokensArray = _user.tokens || [];
         console.log("Existing Tokens:", tokensArray);
@@ -199,8 +199,8 @@ export const manageTokens = async (_user, token) => {
                 return timeDiff < 86400;
             });
         }
-        tokensArray.push({ token, signedAt: Date.now().toString() });
-        await user.findByIdAndUpdate(user._id, { tokens: tokensArray }, { new: true });
+        tokensArray.push({ type, token, signedAt: Date.now().toString(), expiredAt: (Date.now() + 86400000).toString() });
+        await user.findByIdAndUpdate(_user._id, { tokens: tokensArray }, { new: true });
         console.log("Updated Tokens:", tokensArray);
     } catch (error) {
         console.error("Error managing tokens:", error);
@@ -208,41 +208,103 @@ export const manageTokens = async (_user, token) => {
     }
 };
 
+// export const getProfile = async (req, res) => {
+//     console.log(req.cookies);
+//     try {
+//         const user_Cookies = req.cookies.token
+//         if (!user_Cookies) return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Unauthorized - No token Provided' })
+
+//         const decodedUser = jwt.verify(user_Cookies, SECRET_KEY)
+//         console.log(decodedUser);
+//         const userID_Decoded = decodedUser.id
+//         // const foundUser = await user.findById(decoded.id).populate('roles', 'name');
+//         const foundUser = await user.findOne({
+//             $or: [
+//                 { _id: userID_Decoded },  // Tìm theo _id nếu 'id' là ObjectId
+//                 { id: userID_Decoded }    // Tìm theo 'id' nếu 'id' là chuỗi UUID
+//             ]
+//         }).populate('roles', 'name');
+//         if (!foundUser) {
+//             return res.status(StatusCodes.NOT_FOUND).json({ message: 'User not found' });
+//         }
+//         const userProfile = {
+//             username: foundUser.username,
+//             email: foundUser.email,
+//             roles: foundUser.roles.map((role) => role.name),
+//             isActive: foundUser.isActive,
+//             tokens: foundUser.tokens.length,
+//             password: '**********',
+//             createdAt: foundUser.createdAt,
+//             updatedAt: foundUser.updatedAt,
+//         };
+//         return res.status(StatusCodes.OK).json({ message: 'User profile fetched successfully', userProfile });
+//     } catch (error) {
+//         console.error("Error fetching user profile:", error);
+//         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error', error: error.message });
+//     }
+// }
 export const getProfile = async (req, res) => {
     console.log(req.cookies);
-    try {
-        const user_Cookies = req.cookies.token
-        if (!user_Cookies) return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Unauthorized - No token Provided' })
 
-        const decodedUser = jwt.verify(user_Cookies, SECRET_KEY)
-        console.log(decodedUser);
-        const userID_Decoded = decodedUser.id
-        // const foundUser = await user.findById(decoded.id).populate('roles', 'name');
+    try {
+        const userToken = req.cookies.token;
+        if (!userToken) {
+            return res
+                .status(StatusCodes.UNAUTHORIZED)
+                .json({ message: 'Unauthorized - No token provided' });
+        }
+
+        let decodedUser;
+        try {
+            decodedUser = jwt.verify(userToken, SECRET_KEY);
+        } catch (err) {
+            console.error("Invalid or expired token:", err.message);
+            return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Invalid or expired token' });
+        }
+
+        const userID = decodedUser.id;
         const foundUser = await user.findOne({
             $or: [
-                { _id: userID_Decoded },  // Tìm theo _id nếu 'id' là ObjectId
-                { id: userID_Decoded }    // Tìm theo 'id' nếu 'id' là chuỗi UUID
+                { _id: userID }, // Tìm bằng ObjectId
+                { id: userID }   // Tìm bằng UUID
             ]
         }).populate('roles', 'name');
+
         if (!foundUser) {
             return res.status(StatusCodes.NOT_FOUND).json({ message: 'User not found' });
         }
+
+        // Kiểm tra token có tồn tại trong cơ sở dữ liệu
+        const tokenExists = foundUser.tokens.some((tokenObj) => tokenObj.token === userToken);
+        if (!tokenExists) {
+            return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Unauthorized - Token mismatch' });
+        }
+
+        // Tạo profile trả về
         const userProfile = {
             username: foundUser.username,
-            email: foundUser.email,
+            email: foundUser.email, // Cân nhắc loại bỏ hoặc ẩn
             roles: foundUser.roles.map((role) => role.name),
             isActive: foundUser.isActive,
             tokens: foundUser.tokens.length,
-            password: '**********',
+            password: '**********', // Ẩn mật khẩu
             createdAt: foundUser.createdAt,
             updatedAt: foundUser.updatedAt,
         };
-        return res.status(StatusCodes.OK).json({ message: 'User profile fetched successfully', userProfile });
+
+        return res.status(StatusCodes.OK).json({
+            message: 'User profile fetched successfully',
+            userProfile,
+        });
     } catch (error) {
         console.error("Error fetching user profile:", error);
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error', error: error.message });
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: 'Internal Server Error',
+            error: error.message,
+        });
     }
-}
+};
+
 
 // export const verified_OTP = async (req, res) => {
 //     const cookies = req.cookies.token
@@ -422,7 +484,7 @@ export const reset_password = async (req, res) => {
 
         const decodedUser = jwt.verify(token, SECRET_KEY);
         const email = decodedUser.id;
-
+        console.log(decodedUser);
         if (password1 !== password2) {
             return res.status(StatusCodes.BAD_REQUEST).json({ message: 'Passwords do not match' });
         }
@@ -431,11 +493,30 @@ export const reset_password = async (req, res) => {
         if (!userFound) {
             return res.status(StatusCodes.NOT_FOUND).json({ message: 'User not found' });
         }
+        const token1 = jwt.sign({ id: userFound._id.toString() }, SECRET_KEY, { expiresIn: '24h' })
+        const tokenIndex = userFound.tokens.findIndex(t => t.type === 'REPORT-COMPROMISED');
 
+        if (tokenIndex !== -1) {
+
+            userFound.tokens[tokenIndex] = {
+                type: 'REPORT-COMPROMISED',
+                token: token1,
+                signedAt: Date.now().toString(),
+                expiredAt: (Date.now() + 86400000).toString()
+            };
+        } else {
+
+            userFound.tokens.push({
+                type: 'REPORT-COMPROMISED',
+                token: token1,
+                signedAt: Date.now().toString(),
+                expiredAt: (Date.now() + 86400000).toString()
+            });
+        }
         userFound.password = password1;
-        await userFound.save();
 
-
+        const usave = await userFound.save();
+        console.log(usave);
         await sendMailNotification({
             email: userFound.email,
             username: userFound.username,
@@ -445,12 +526,13 @@ export const reset_password = async (req, res) => {
             \n\nThank you.`,
             html: `<p>Hi ${userFound.username},</p>
                 <p>Your password for the account <b>${userFound.email}</b> has been successfully reset.</p>
-                <p>If this password change was not done by you, please <a href="https://vlxx.tech" target="_blank">click here</a> to report your account as compromised.</p>
+                <p>If this password change was not done by you, please <a href="http://localhost:4000/api/auth/report/compromised?token=${token1}" target="_blank">click here</a> to report your account as compromised.</p>
                 <p>Thank you.</p>
             `,
         });
 
-        res.clearCookie('resetPasswordToken');
+        // res.clearCookie('resetPasswordToken');
+        res.clearCookie('resetPasswordToken', { httpOnly: true, path: '/' });
 
         return res.status(200).json({ message: 'Password reset successful' });
     } catch (err) {
@@ -464,5 +546,80 @@ export const reset_password = async (req, res) => {
 
 
 export const report_compromised_account = async (req, res) => {
+    const token = req.query.token
 
-}
+    if (!token) {
+        return res.status(400).json({ message: 'Token is required' });
+    }
+
+    try {
+        // Giải mã token
+        const decodedUser = jwt.verify(token, SECRET_KEY);
+        const userID = decodedUser.id;
+        console.log(decodedUser);
+        // Tìm người dùng bằng ID
+        const foundUser = await user.findById(userID);
+        if (!foundUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        foundUser.isActive = false;
+        foundUser.tokens = foundUser.tokens.filter((t) => t.token !== token);
+        await foundUser.save();
+
+        // Tùy chọn: Gửi thông báo qua email
+        // await sendMailNotification({ email: foundUser.email });
+
+        return res.status(200).json({ message: 'Account reported as compromised' });
+    } catch (error) {
+        console.error('Error in report_compromised_account:', error);
+
+        const isTokenExpired = error.name === 'TokenExpiredError';
+        return res.status(isTokenExpired ? 401 : 500).json({
+            message: isTokenExpired
+                ? 'Token has expired. Please request a new report link.'
+                : 'An error occurred while processing your request.',
+            error: error.message || 'Unknown error',
+        });
+    }
+};
+
+
+export const report_compromised_account1 = async (req, res) => {
+    const { token } = req.query;
+
+    if (!token) {
+        return res.status(400).json({ message: 'Token is required' });
+    }
+
+    try {
+
+        const user = await user.findOne({
+            'tokens.token': token,
+            'tokens.type': 'REPORT-COMPROMISED'
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: 'Invalid or expired token' });
+        }
+
+        user.isActive = false;
+
+
+        user.tokens = user.tokens.filter((t) => t.token !== token);
+
+        await user.save();
+
+        return res.status(200).json({ message: 'Account reported as compromised' });
+    } catch (error) {
+        console.error('Error in report_compromised_account1:', error);
+
+        const isTokenExpired = error.name === 'TokenExpiredError';
+        return res.status(isTokenExpired ? 401 : 500).json({
+            message: isTokenExpired
+                ? 'Token has expired. Please request a new report link.'
+                : 'An error occurred while processing your request.',
+            error: error.message || 'Unknown error',
+        });
+    }
+};
